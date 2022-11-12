@@ -8,19 +8,49 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @EnvironmentObject var vm : MovieViewModel
+    
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        NavigationView {
+            VStack {
+                if let items = vm.result?.items {
+                    List{
+                        ForEach(items, id: \.title) { movie in
+                            HStack{
+                                AsyncImage(url: URL(string: movie.image))
+                                Text(movie.rank)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text(movie.title)
+                                    .font(.title2)
+                            }
+                        }
+                        
+                    }.listStyle(PlainListStyle())
+                }else {
+                   ProgressView()
+                }
+            }.onAppear{
+                Task{
+                    do {
+                        try await vm.getMovie()
+                        
+                    } catch {
+                        print("Error call Api")
+                    }
+                }
+            }
+                .navigationTitle("Movie")
+                
+                }
+            }
         }
-        .padding()
+    
+    
+    struct ContentView_Previews: PreviewProvider {
+        static var previews: some View {
+            ContentView()
+        }
     }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
