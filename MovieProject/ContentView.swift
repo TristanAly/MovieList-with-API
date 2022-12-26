@@ -19,7 +19,16 @@ struct ContentView: View {
                     List{
                         ForEach(items, id: \.title) { movie in
                             HStack{
-                                AsyncImage(url: URL(string: movie.image))
+                                AsyncImage(url: URL(string: movie.image)) {
+                                    image in
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 85, height: 85)
+                                } placeholder: {
+                                    ProgressView()
+                                        .frame(width: 85, height: 85)
+                                }
                                 Text(movie.rank)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
@@ -42,7 +51,7 @@ struct ContentView: View {
                     }
                 }
             }
-                .navigationTitle("Movie")
+                .navigationTitle("Popular Movies")
                 
                 }
             }
@@ -52,5 +61,6 @@ struct ContentView: View {
     struct ContentView_Previews: PreviewProvider {
         static var previews: some View {
             ContentView()
+                .environmentObject(MovieViewModel())
         }
     }
